@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field should render correctly 1`] = `
+<div
+  class="rh-form-field rh-form-field--inline rh-form-field--required "
+>
+  <div
+    class="rh-form-field__header"
+    style="width:200px;margin-right:30px"
+  >
+    Label
+  </div>
+  <div
+    class="rh-form-field__container"
+  >
+    <div
+      class="rh-form-field__control"
+    >
+      <input
+        type="text"
+      />
+    </div>
+    <div
+      class="rh-form-field__message"
+    />
+  </div>
+  <div
+    class="rh-form-field__footer"
+  >
+    Suffix
+  </div>
+</div>
+`;
+
+exports[`Field should render error correctly 1`] = `
+<form
+  class="rh-form "
+>
+  <div>
+    <div
+      class="rh-form-field rh-form-field--error "
+    >
+      <div
+        class="rh-form-field__header"
+      >
+        Label
+      </div>
+      <div
+        class="rh-form-field__container"
+      >
+        <div
+          class="rh-form-field__control"
+        />
+        <div
+          class="rh-form-field__message"
+        >
+          Error Message
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`Form should render correctly 1`] = `
+<form
+  class="rh-form "
+/>
+`;
+
+exports[`Form should render correctly 2`] = `
+<form
+  class="rh-form "
+>
+  Hello World
+</form>
+`;
+
+exports[`Form should render correctly 3`] = `
+<form
+  class="rh-form "
+>
+  <div>
+    Hello
+  </div>
+  <div>
+    World
+  </div>
+</form>
+`;
+
+exports[`Item should render correctly 1`] = `
+<form
+  class="rh-form "
+>
+  <input
+    type="text"
+  />
+</form>
+`;
