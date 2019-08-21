@@ -12,18 +12,19 @@ export interface FormProps extends FormOptions {
   className?: string
   store: FormStore
   children?: React.ReactNode
-  onSubmit?: (e: React.FormEvent) => void
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void
+  onReset?: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
 export function Form (props: FormProps) {
-  const { className = '', children, store, onSubmit, ...options } = props
+  const { className = '', children, store, onSubmit, onReset, ...options } = props
 
   const classNames = 'rh-form ' + className
 
   return (
     <FormStoreContext.Provider value={store}>
       <FormOptionsContext.Provider value={options}>
-        <form className={classNames} onSubmit={onSubmit}>
+        <form className={classNames} onSubmit={onSubmit} onReset={onReset}>
           {children}
         </form>
       </FormOptionsContext.Provider>

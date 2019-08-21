@@ -25,12 +25,12 @@ storiesOf('Form', module).add('items', () => {
     console.log('change', name, store.get(name))
   })
 
-  const onReset = (e: React.MouseEvent) => {
+  const onReset = (e: React.FormEvent) => {
     e.preventDefault()
     store.reset()
   }
 
-  const onSubmit = (e: React.MouseEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     const [error, values] = store.validate()
@@ -38,7 +38,7 @@ storiesOf('Form', module).add('items', () => {
   }
 
   return (
-    <Form store={store} errorClassName='error'>
+    <Form store={store} errorClassName='error' onSubmit={onSubmit} onReset={onReset}>
       <Form.Item name='username'>
         <input type='text' />
       </Form.Item>
@@ -58,8 +58,8 @@ storiesOf('Form', module).add('items', () => {
         <input type='text' />
       </Form.Item>
       <Form.Item>
-        <button onClick={onReset}>Reset</button>
-        <button onClick={onSubmit}>Submit</button>
+        <button type='reset'>Reset</button>
+        <button type='submit'>Submit</button>
       </Form.Item>
     </Form>
   )
