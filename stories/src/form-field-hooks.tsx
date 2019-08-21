@@ -31,10 +31,10 @@ function App () {
     store.reset()
   }, [])
 
-  const onSubmit = React.useCallback((e: React.MouseEvent) => {
+  const onSubmit = React.useCallback(async (e: React.MouseEvent) => {
     e.preventDefault()
 
-    const [error, values] = store.validate()
+    const [error, values] = await store.validate()
     console.log(error, values)
   }, [])
 

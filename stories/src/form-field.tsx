@@ -31,10 +31,10 @@ storiesOf('Form', module).add('fields', () => {
     store.reset()
   }
 
-  const onSubmit = (e: React.MouseEvent) => {
+  const onSubmit = async (e: React.MouseEvent) => {
     e.preventDefault()
 
-    const [error, values] = store.validate()
+    const [error, values] = await store.validate()
     console.log(error, values)
   }
 
