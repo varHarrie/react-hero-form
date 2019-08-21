@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { cloneElement, isValidElement, useCallback, useContext, useState } from 'react'
 
 import { FormStoreContext } from './form-store-context'
 import { useFieldChange } from './use-field-change'
@@ -44,10 +44,10 @@ export function FormField (props: FormFieldProps) {
 
   let child: any = children
 
-  if (name && store && React.isValidElement(child)) {
+  if (name && store && isValidElement(child)) {
     const prop = getPropName(valueProp, child && child.type)
     const childProps = { [prop]: value, onChange }
-    child = React.cloneElement(child, childProps)
+    child = cloneElement(child, childProps)
   }
 
   const { inline, compact, required, labelWidth, gutter, errorClassName } = {
