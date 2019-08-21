@@ -6,5 +6,5 @@ export function useFormStore<T extends Object = any> (
   values: Partial<T> = {},
   rules: FormRules = {}
 ) {
-  return useMemo(() => new FormStore(values, rules), [values, rules])
+  return useMemo(() => new FormStore(values, rules), [])
 }
