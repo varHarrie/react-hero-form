@@ -1,10 +1,10 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { boolean, number } from '@storybook/addon-knobs'
-import { Form, FormStore } from 'react-hero-form'
+import { Form, useFormChange, useFormStore } from 'react-hero-form'
 
-storiesOf('Components/Form', module).add('normal', () => {
-  const store = new FormStore(
+function App () {
+  const store = useFormStore(
     {
       username: 'Default',
       password: '',
@@ -22,21 +22,21 @@ storiesOf('Components/Form', module).add('normal', () => {
     }
   )
 
-  store.subscribe((name) => {
+  useFormChange(store, (name) => {
     console.log('change', name, store.get(name))
   })
 
-  const onReset = (e: React.MouseEvent) => {
+  const onReset = React.useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     store.reset()
-  }
+  }, [])
 
-  const onSubmit = (e: React.MouseEvent) => {
+  const onSubmit = React.useCallback((e: React.MouseEvent) => {
     e.preventDefault()
 
     const [error, values] = store.validate()
     console.log(error, values)
-  }
+  }, [])
 
   return (
     <Form
@@ -71,4 +71,8 @@ storiesOf('Components/Form', module).add('normal', () => {
       </Form.Field>
     </Form>
   )
+}
+
+storiesOf('Form', module).add('fields with hooks', () => {
+  return <App />
 })

@@ -1,10 +1,9 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { boolean, number } from '@storybook/addon-knobs'
-import { Form, useFormChange, useFormStore } from 'react-hero-form'
+import { Form, FormStore } from 'react-hero-form'
 
-function App () {
-  const store = useFormStore(
+storiesOf('Form', module).add('items', () => {
+  const store = new FormStore(
     {
       username: 'Default',
       password: '',
@@ -22,57 +21,46 @@ function App () {
     }
   )
 
-  useFormChange(store, (name) => {
+  store.subscribe((name) => {
     console.log('change', name, store.get(name))
   })
 
-  const onReset = React.useCallback((e: React.MouseEvent) => {
+  const onReset = (e: React.MouseEvent) => {
     e.preventDefault()
     store.reset()
-  }, [])
+  }
 
-  const onSubmit = React.useCallback((e: React.MouseEvent) => {
+  const onSubmit = (e: React.MouseEvent) => {
     e.preventDefault()
 
     const [error, values] = store.validate()
     console.log(error, values)
-  }, [])
+  }
 
   return (
-    <Form
-      store={store}
-      inline={boolean('Inline', false)}
-      compact={boolean('Compact', false)}
-      required={boolean('Required', false)}
-      labelWidth={number('Label Width', 120)}
-      gutter={number('Gutter', 20)}
-    >
-      <Form.Field label='Username' name='username'>
+    <Form store={store} errorClassName='error'>
+      <Form.Item name='username'>
         <input type='text' />
-      </Form.Field>
-      <Form.Field label='Password' name='password'>
+      </Form.Item>
+      <Form.Item name='password'>
         <input type='password' />
-      </Form.Field>
-      <Form.Field label='Gender' name='gender'>
+      </Form.Item>
+      <Form.Item name='gender'>
         <select>
           <option value='male'>Male</option>
           <option value='female'>Female</option>
         </select>
-      </Form.Field>
-      <Form.Field label='Phone' name='contact.phone'>
+      </Form.Item>
+      <Form.Item name='contact.phone'>
         <input type='text' />
-      </Form.Field>
-      <Form.Field label='Address' name='contact.address'>
+      </Form.Item>
+      <Form.Item name='contact.address'>
         <input type='text' />
-      </Form.Field>
-      <Form.Field label=''>
+      </Form.Item>
+      <Form.Item>
         <button onClick={onReset}>Reset</button>
         <button onClick={onSubmit}>Submit</button>
-      </Form.Field>
+      </Form.Item>
     </Form>
   )
-}
-
-storiesOf('Components/Form', module).add('hooks', () => {
-  return <App />
 })
