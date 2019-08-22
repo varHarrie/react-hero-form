@@ -94,6 +94,7 @@ exports[`Item should render correctly 1`] = `
   class="rh-form "
 >
   <input
+    class=" error"
     type="text"
   />
 </form>

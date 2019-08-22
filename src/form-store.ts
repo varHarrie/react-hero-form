@@ -42,18 +42,19 @@ export class FormStore<T extends Object = any> {
     return name === undefined ? { ...this.values } : deepGet(this.values, name)
   }
 
-  public set (values: Partial<T>): void
-  public set (name: string, value: any, validate?: boolean): void
-  public set (name: any, value?: any, validate: boolean = true) {
+  public async set (values: Partial<T>): Promise<void>
+  public async set (name: string, value: any, validate?: boolean): Promise<void>
+  public async set (name: any, value?: any, validate: boolean = true) {
     if (typeof name === 'string') {
       deepSet(this.values, name, value)
       this.notify(name)
 
       if (validate) {
-        this.validate(name).then(() => this.notify(name))
+        await this.validate(name)
+        this.notify(name)
       }
     } else if (name) {
-      Object.keys(name).forEach((n) => this.set(n, name[n]))
+      await Promise.all(Object.keys(name).map((n) => this.set(n, name[n])))
     }
   }
 
@@ -88,7 +89,7 @@ export class FormStore<T extends Object = any> {
 
   public async validate (): Promise<[Error | undefined, T]>
   public async validate (name: string): Promise<[Error | undefined, any]>
-  public async validate (name?: string): Promise<any> {
+  public async validate (name?: string) {
     if (name === undefined) {
       await Promise.all(Object.keys(this.rules).map((n) => this.validate(n)))
       this.notify('*')

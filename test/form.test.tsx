@@ -38,12 +38,12 @@ describe('Field', () => {
 
   it('should render error correctly', () => {
     const store = new FormStore()
-    store.error('Name', 'Error Message')
+    store.error('name', 'Error Message')
 
     const wrapper = render(
       <Form store={store}>
         <div>
-          <FormField label='Label' name='Name' />
+          <FormField label='Label' name='name' />
         </div>
       </Form>
     )
@@ -54,10 +54,11 @@ describe('Field', () => {
 describe('Item', () => {
   it('should render correctly', () => {
     const store = new FormStore()
+    store.error('name', 'Error Message')
 
     const wrapper = render(
-      <Form store={store}>
-        <FormItem>
+      <Form store={store} errorClassName='error'>
+        <FormItem name='name'>
           <input type='text' />
         </FormItem>
       </Form>

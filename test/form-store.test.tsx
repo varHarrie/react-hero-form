@@ -41,7 +41,7 @@ describe('FormStore', () => {
     expect(store.error()).toEqual({ key0: 'error0', key1: 'error1', 'deep.key': 'error2' })
   })
 
-  it('validate', () => {
+  it('validate', async () => {
     const store = new FormStore(
       {
         username: '',
@@ -58,19 +58,21 @@ describe('FormStore', () => {
       }
     )
 
-    store.set('username', 'Harrie')
-    store.set('password', '123')
+    await store.set('username', 'Harrie')
+    await store.set('password', '123')
 
     expect(store.error('username')).toBe(undefined)
     expect(store.error('password')).toBe('Password length is invalid')
 
-    const [error, password] = store.validate('password')
+    const [error, password] = await store.validate('password')
+
     expect(error).toBeInstanceOf(Error)
     expect(error.message).toBe('Password length is invalid')
     expect(password).toBe('123')
 
-    store.set('password', '123456')
-    const [error2, values] = store.validate()
+    await store.set('password', '123456')
+    const [error2, values] = await store.validate()
+
     expect(error2).toBeInstanceOf(Error)
     expect(error2.message).toBe('Email is invalid')
     expect(values).toEqual({
