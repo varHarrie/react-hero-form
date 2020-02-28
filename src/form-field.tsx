@@ -42,17 +42,21 @@ export function FormField (props: FormFieldProps) {
     setError(store!.error(name!))
   })
 
+  const { inline, compact, required, labelWidth, gutter, errorClassName = 'error' } = {
+    ...options,
+    ...restProps
+  }
+
   let child: any = children
 
   if (name && store && isValidElement(child)) {
     const prop = getPropName(valueProp, child && child.type)
-    const childProps = { [prop]: value, onChange }
-    child = cloneElement(child, childProps)
-  }
 
-  const { inline, compact, required, labelWidth, gutter, errorClassName } = {
-    ...options,
-    ...restProps
+    let childClassName = (child.props && (child.props as any).className) || ''
+    if (error) childClassName += ' ' + errorClassName
+
+    const childProps = { className: childClassName, [prop]: value, onChange }
+    child = cloneElement(child, childProps)
   }
 
   const classNames = [
@@ -61,8 +65,7 @@ export function FormField (props: FormFieldProps) {
     compact ? classes.compact : '',
     required ? classes.required : '',
     error ? classes.error : '',
-    className ? className : '',
-    error ? errorClassName : ''
+    className ? className : ''
   ].join('')
 
   const headerStyle = {

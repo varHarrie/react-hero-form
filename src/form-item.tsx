@@ -33,7 +33,7 @@ export function FormItem (props: FormItemProps) {
   let child: any = children
 
   if (name && store && isValidElement(child)) {
-    const { errorClassName } = options
+    const { errorClassName = 'error' } = options
     const prop = getPropName(valueProp, child && child.type)
 
     let className = (child.props && (child.props as any).className) || ''
