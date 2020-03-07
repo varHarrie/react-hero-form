@@ -33,7 +33,7 @@ export function FormField (props: FormFieldProps) {
   const [error, setError] = useState(name && store ? store.error(name) : undefined)
 
   const onChange = useCallback(
-    (...args: any[]) => name && store && store.set(name, valueGetter(...args)),
+    (...args: any[]) => name && store && store.set(name, valueGetter(...args), true),
     [name, store, valueGetter]
   )
 

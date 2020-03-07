@@ -81,21 +81,27 @@ store.reset();
 
 ## Form Validation
 
-The second parameter is used to pass the form rules. Each function should return a `boolean` or `string` value:
-
-- Returning `true` means check successfully.
-- Returning `false` or `string` means check failed, and the string result is the error message.
+The second parameter is used to pass the form rules. 
 
 Using `store.validate()` to check entire form, and returns a tuple with error message and form values. Or directly gets form values by `store.get()` without validation.
 
 ```javascript
+function assert(condition, message) {
+  if (!condition) throw new Error(message)
+}
+
 const rules = {
-  name: (!!val && !!val.trim()) || "Name is required"
+  name: (val) => assert(!!val && !!val.trim(), "Name is required")
 };
 
 const store = new FormStore({}, rules);
 // ...
-const [error, values] = store.validate();
+try {
+  const values = await store.validate();
+  console.log('values:', values);
+} catch (error) {
+  console.log('error:', error);
+}
 ```
 
 ## APIs
@@ -135,10 +141,10 @@ const [error, values] = store.validate();
 - `store.get(name)` Returns field value by name.
 - `store.set()` Sets entire form values.
 - `store.set(name, value)` Sets field value by name.
-- `store.set(name, value, false)` Sets field value by name without validating.
+- `store.set(name, value, true)` Sets field value by name and validate.
 - `store.reset()` Resets form with default values.
-- `store.validate()` Validates entire form and returns error message and values.
-- `store.validate(name)` Validates field value by name and returns error message and value.
+- `store.validate()` Validates entire form and returns values.
+- `store.validate(name)` Validates field value by name and returns value.
 - `store.error()` Returns the all error messages.
 - `store.error(index)` Returns the nth error message.
 - `store.error(name)` Returns error message by name.

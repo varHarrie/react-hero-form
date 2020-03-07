@@ -2,6 +2,10 @@ import 'jest'
 
 import { FormStore } from '..'
 
+function assert(condition, message) {
+  if (!condition) throw new Error(message)
+}
+
 describe('FormStore', () => {
   it('set', () => {
     const store = new FormStore()
@@ -52,26 +56,27 @@ describe('FormStore', () => {
         }
       },
       {
-        username: (val) => val.length > 0 || 'Username is required',
-        password: (val) => (val.length >= 6 && val.length <= 18) || 'Password length is invalid',
-        'contacts.email': (email) => email.includes('@') || 'Email is invalid'
+        username: (val) => assert(val.length > 0, 'Username is required'),
+        password: (val) =>
+          assert(val.length >= 6 && val.length <= 18, 'Password length is invalid'),
+        'contacts.email': (email) => assert(email.includes('@'), 'Email is invalid')
       }
     )
 
-    await store.set('username', 'Harrie')
-    await store.set('password', '123')
+    await store.set('username', 'Harrie', true)
+    await store.set('password', '123', true)
 
     expect(store.error('username')).toBe(undefined)
     expect(store.error('password')).toBe('Password length is invalid')
 
-    const [error, password] = await store.validate('password')
+    const error = await store.validate('password').catch((err) => err)
 
     expect(error).toBeInstanceOf(Error)
     expect(error.message).toBe('Password length is invalid')
-    expect(password).toBe('123')
 
     await store.set('password', '123456')
-    const [error2, values] = await store.validate()
+    const error2 = await store.validate().catch((err) => err)
+    const values = store.get()
 
     expect(error2).toBeInstanceOf(Error)
     expect(error2.message).toBe('Email is invalid')

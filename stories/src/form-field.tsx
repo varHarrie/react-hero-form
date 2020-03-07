@@ -3,6 +3,10 @@ import { storiesOf } from '@storybook/react'
 import { boolean, number } from '@storybook/addon-knobs'
 import { Form, FormStore } from 'react-hero-form'
 
+function assert (condition: any, message?: string) {
+  if (!condition) throw new Error(message)
+}
+
 storiesOf('Form', module).add('fields', () => {
   const store = new FormStore(
     {
@@ -15,10 +19,10 @@ storiesOf('Form', module).add('fields', () => {
       }
     },
     {
-      username: (val) => !!val.trim() || 'Name is required',
-      password: (val) => !!val.trim() || 'Password is required',
-      'contact.phone': (val) => /[0-9]{11}/.test(val) || 'Phone is invalid',
-      'contact.address': (val) => !!val.trim() || 'Address is required'
+      username: (val) => assert(!!val.trim(), 'Name is required'),
+      password: (val) => assert(!!val.trim(), 'Password is required'),
+      'contact.phone': (val) => assert(/[0-9]{11}/.test(val), 'Phone is invalid'),
+      'contact.address': (val) => assert(!!val.trim(), 'Address is required')
     }
   )
 
@@ -34,8 +38,12 @@ storiesOf('Form', module).add('fields', () => {
   const onSubmit = async (e: React.MouseEvent) => {
     e.preventDefault()
 
-    const [error, values] = await store.validate()
-    console.log(error, values)
+    try {
+      const values = await store.validate()
+      console.log('values:', values)
+    } catch (error) {
+      console.log('error:', error)
+    }
   }
 
   return (

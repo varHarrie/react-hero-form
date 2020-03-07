@@ -2,9 +2,7 @@ import { deepCopy, deepGet, deepSet } from './utils'
 
 export type FormListener = (name: string) => void
 
-export type FormResult = boolean | string | number | object | null | undefined
-
-export type FormValidator = (value: any, values: any) => FormResult | Promise<FormResult>
+export type FormValidator = (value: any, values: any) => void | Promise<void>
 
 export type FormRules = { [key: string]: FormValidator }
 
@@ -44,13 +42,13 @@ export class FormStore<T extends Object = any> {
 
   public async set (values: Partial<T>): Promise<void>
   public async set (name: string, value: any, validate?: boolean): Promise<void>
-  public async set (name: any, value?: any, validate: boolean = true) {
+  public async set (name: any, value?: any, validate?: boolean) {
     if (typeof name === 'string') {
       deepSet(this.values, name, value)
       this.notify(name)
 
       if (validate) {
-        await this.validate(name)
+        await this.validate(name).catch((err) => err)
         this.notify(name)
       }
     } else if (name) {
@@ -87,25 +85,39 @@ export class FormStore<T extends Object = any> {
     return this.errors[name]
   }
 
-  public async validate (): Promise<[Error | undefined, T]>
-  public async validate (name: string): Promise<[Error | undefined, any]>
+  public async validate (): Promise<T>
+  public async validate (name: string): Promise<any>
   public async validate (name?: string) {
     if (name === undefined) {
-      await Promise.all(Object.keys(this.rules).map((n) => this.validate(n)))
+      let error: Error | undefined = undefined
+
+      try {
+        await Promise.all(Object.keys(this.rules).map((n) => this.validate(n)))
+      } catch (err) {
+        error = err
+      }
+
       this.notify('*')
+      if (error) throw error
 
-      const message = this.error(0)
-      const error = message === undefined ? undefined : new Error(message)
-
-      return [error, this.get()]
+      return this.get()
     } else {
       const validator = this.rules[name]
       const value = this.get(name)
+      let error: Error | undefined = undefined
 
-      const error = await executeValidator(validator, value, this.values)
+      if (validator) {
+        try {
+          await validator(value, this.values)
+        } catch (err) {
+          error = err
+        }
+      }
+
       this.error(name, error && error.message)
+      if (error) throw error
 
-      return [error, value]
+      return value
     }
   }
 
@@ -117,20 +129,4 @@ export class FormStore<T extends Object = any> {
       if (index > -1) this.listeners.splice(index, 1)
     }
   }
-}
-
-async function executeValidator (
-  validator: FormValidator | undefined,
-  value: any,
-  values: any
-): Promise<Error | undefined> {
-  if (validator) {
-    const result = await validator(value, values)
-
-    if (result !== true && result !== undefined) {
-      return new Error(typeof result === 'string' ? result : '')
-    }
-  }
-
-  return undefined
 }

@@ -2,6 +2,10 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { Form, FormStore } from 'react-hero-form'
 
+function assert (condition: any, message?: string) {
+  if (!condition) throw new Error(message)
+}
+
 storiesOf('Form', module).add('items', () => {
   const store = new FormStore(
     {
@@ -14,13 +18,17 @@ storiesOf('Form', module).add('items', () => {
       }
     },
     {
-      username: (val) => !!val.trim() || 'Name is required',
-      password: (val) => !!val.trim() || 'Password is required',
-      'contact.phone': (val) => /[0-9]{11}/.test(val) || 'Phone is invalid',
+      username: (val) => assert(!!val.trim(), 'Name is required'),
+      password: (val) => assert(!!val.trim(), 'Password is required'),
+      'contact.phone': (val) => assert(/[0-9]{11}/.test(val), 'Phone is invalid'),
       'contact.address': async (val) => {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve, reject) => {
           setTimeout(() => {
-            resolve(!!val.trim() || 'Address is required')
+            if (val.trim()) {
+              resolve()
+            } else {
+              reject(new Error('Address is required'))
+            }
           }, 1000)
         })
       }
@@ -39,8 +47,12 @@ storiesOf('Form', module).add('items', () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const [error, values] = await store.validate()
-    console.log(error, values)
+    try {
+      const values = await store.validate()
+      console.log('values:', values)
+    } catch (error) {
+      console.log('error:', error)
+    }
   }
 
   return (

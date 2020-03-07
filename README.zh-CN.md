@@ -57,21 +57,27 @@ store.reset();
 
 ## 表单校验
 
-第二个参数用于设置校验规则，其中的每个函数必须返回一个`boolean`或`string`类型的值。
-
-- 若返回`true`，代表校验通过。
-- 若返回`false`或者`string`，代表校验失败，`string`类型的结果作为错误信息。
+第二个参数用于设置校验规则，当校验函数抛出异常时，代表校验不通过。
 
 使用`store.validate()`可以校验整个表单，并且返回一个包含错误信息和表单值的数组。
 
 ```javascript
+function assert(condition, message) {
+  if (!condition) throw new Error(message)
+}
+
 const rules = {
-  name: (!!val && !!val.trim()) || "Name is required"
+  name: (val) => assert(!!val && !!val.trim(), "Name is required")
 };
 
 const store = new FormStore({}, rules);
 // ...
-const [error, values] = store.validate();
+try {
+  const values = await store.validate();
+  console.log('values:', values);
+} catch (error) {
+  console.log('error:', error);
+}
 ```
 
 ## APIs
@@ -104,7 +110,7 @@ const [error, values] = store.validate();
 - `store.get(name)` 根据字段名返回表单域的值。
 - `store.set()` 设置整个表单的值。
 - `store.set(name, value)` 根据字段名设置表单域的值。
-- `store.set(name, value, false)` 根据字段名设置表单域的值，并跳过校验。
+- `store.set(name, value, true)` 根据字段名设置表单域的值，并校验。
 - `store.reset()` 重置表单。
 - `store.validate()` 校验整个表单，并返回错误信息和表单值。
 - `store.validate(name)` 根据字段名校验表单域的值，并返回错误信息和表单值。
